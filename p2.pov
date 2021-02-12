@@ -1,0 +1,188 @@
+#include "colors.inc"
+#include "textures.inc"
+
+
+// ultra_wide_angle lens for wide, rectangular field of view
+camera {
+  ultra_wide_angle
+  location <0, 75, 0>               // position
+  look_at  <0, 0, 0>                // view
+  right x*image_width/image_height  // aspect
+  angle 45                          // field
+}
+light_source{<1500,2500,-2500> color White}
+#declare HoleInnerR = 1.25;
+#declare HoleScale  = 1.50;
+#declare HoleR      = 1.00;   
+
+#declare a=1;
+#declare b=tan(pi*30/180);       // 0.577350269
+#declare c= sqrt((a*a)+(b*b));   // 1.154700538
+#declare d=1/(1+c);              // 0.464101615
+
+plane{<0,1,0>,1 hollow no_shadow 
+       texture{ pigment{ Bright_Blue_Sky scale 2
+                        }
+                finish {ambient 1 diffuse 0} }                     
+       scale 10000
+       pigment {
+      julia <0.353, 0.288>, 30
+      interior 1, 1
+      color_map { 
+	    [0 rgb 0]
+        [0.2 rgb x]
+        [0.4 rgb x+y]
+        [1 rgb 1]
+        [1 rgb 0]
+      }
+    }
+       }
+
+
+union{
+difference{
+
+plane{<0,1,0>, 0 }
+cylinder{<0,-HoleR,0>, <0,0.0001,0>,HoleInnerR+HoleR scale HoleScale}
+cylinder{<0,  -100,0>, <0,0.0001,0>,HoleInnerR scale HoleScale}
+          } // end of difference
+          
+torus{ HoleInnerR+HoleR, HoleR 
+       translate<0,-HoleR,0>scale HoleScale}
+
+ texture{Polished_Chrome //Glass3 
+         normal {spiral1  20  0.25  sine_wave    
+                 turbulence 0.1 rotate<90,0,0> scale <0.25,0.5,0.25> }
+         } 
+         
+  scale<1,1,1>*7.5
+ } // end of union
+
+#macro conjuntoesfera() 
+ merge
+        {
+        sphere {<-0.15,0,0>,1 
+        texture{Polished_Chrome //Glass3 
+         finish { reflection {1.0} ambient 0 diffuse 0 }}}
+        sphere {<0,0,0>,1 translate <0,0,1.75> rotate <0,60,0> 
+        texture{Polished_Chrome //Glass3 
+        finish { reflection {1.0} ambient 0 diffuse 0 }}}
+        sphere {<0,0,0>,1 translate <0,0,1.75> 
+        texture{Polished_Chrome //Glass3
+        finish { reflection {1.0} ambient 0 diffuse 0 }}}
+        torus {2.05,0.2
+         
+                rotate <0,0,0>
+                translate<0.45,0,0.85> 
+                 texture{Polished_Chrome //Glass3 
+         normal {spiral1  20  0.25  sine_wave    
+                 turbulence 0.1 rotate<0,0,0> scale <0.25,0.5,0.25> }
+         finish { reflection {1.0} ambient 0 diffuse 0 }}
+        }
+        // tiling pattern in the xz plane   
+        
+        rotate x*0
+        rotate y*27
+        translate <-1.0,0,0 > 
+        
+        }   
+#end
+#macro tresconjuntoesfera()
+ merge
+        {
+        object {conjuntoesfera()  translate<0,0,4>} 
+       
+        object {conjuntoesfera() 
+                            translate <-1.95,0,0.75> 
+                           }
+                           
+        object {conjuntoesfera()
+                            translate <1.95,0,0.75> }
+                            
+        torus {4.5,0.3
+         
+                rotate <0,0,0>
+                translate<-0.2,0,2.35> 
+                 texture{Polished_Chrome //Glass3 
+         normal {spiral1  20  0.25  sine_wave    
+                 turbulence 0.1 rotate<0,0,0> scale <0.25,0.5,0.25> }
+         finish { reflection {1.0} ambient 0 diffuse 0 }}
+        }                    
+        
+        scale<1,1,1>*0.75
+        }                
+#end
+
+#macro conjunto()
+merge
+        {
+        object {tresconjuntoesfera() scale 1 translate<0,0,3.4>}
+        object {tresconjuntoesfera() scale 1  
+                            translate <3.3,0,-2.4> }
+        object {tresconjuntoesfera() scale 1
+                            translate <-3.3,0,-2.4> }
+                                                 
+         torus {7.35,0.3
+         
+                rotate <0,0,0>
+                translate<-0.1,0,1.4> 
+                 texture{Polished_Chrome //Glass3 
+         normal {spiral1  20  0.25  sine_wave    
+                 turbulence 0.1 rotate<0,0,0> scale <0.25,0.5,0.25> }
+         finish { reflection {1.0} ambient 0 diffuse 0 }}
+        } 
+        translate <-1,0,0 >
+        
+        }
+#end   
+#macro conjuntoGrande()
+merge
+        {
+        object {conjunto() scale 1 translate<0,0,6.35>}
+        object {conjunto() scale 1  
+                            translate <7.3,0,-6.35> }
+        object {conjunto() scale 1
+                            translate <-7.3,0,-6.35> }
+        torus {15.95,0.3
+         
+                rotate <0,0,0>
+                translate<-1,0,-0.75> 
+                 texture{Polished_Chrome //Glass3 
+         normal {spiral1  20  0.25  sine_wave    
+                 turbulence 0.1 rotate<0,0,0> scale <0.25,0.5,0.25> }
+         finish { reflection {1.0} ambient 0 diffuse 0 }}
+        } 
+        translate <0,0,0>
+        
+        }
+#end
+
+#macro conjuntoGrande2()
+merge{
+     object {conjuntoGrande() scale 0.45 translate<0,0,6.3>}
+     object {conjuntoGrande() scale 0.45  
+                        translate <7.25,0,-6.3> }
+     object {conjuntoGrande() scale 0.45
+                        translate <-7.25,0,-6.3> } 
+      torus {15.65,0.3
+         
+                rotate <0,0,0>
+                translate<-0.4,0,-2.5> 
+                 texture{Polished_Chrome //Glass3 
+         normal {spiral1  20  0.25  sine_wave    
+                 turbulence 0.1 rotate<0,0,0> scale <0.25,0.5,0.25> }
+         finish { reflection {1.0} ambient 0 diffuse 0 }}
+        } 
+     translate<0.3,0,2.3>
+} 
+#end
+
+merge{
+     object {conjuntoGrande2() scale 0.45 translate<0,0,6.2>}
+     object {conjuntoGrande2() scale 0.45  
+                        translate <7.1,0,-6.2> }
+     object {conjuntoGrande2() scale 0.45
+                        translate <-7.1,0,-6.2> }   
+     translate<0.3,0,2.3>
+    }
+     
